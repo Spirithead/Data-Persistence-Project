@@ -11,6 +11,7 @@ public class NameManager : MonoBehaviour
     private string playerName;
     private int topScore;
     [SerializeField] private GameObject inputField;
+    [SerializeField] private GameObject textField;
     private static NameManager Instance;
     string path; 
     
@@ -30,7 +31,7 @@ public class NameManager : MonoBehaviour
         if (File.Exists(path))
         {
             LoadNameScore();
-            Debug.Log(playerName + " " + topScore);
+            textField.GetComponent<Text>().text = "Best Score: " + playerName + " : " + topScore;
         }
         
     }
