@@ -1,8 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class MainManager : MonoBehaviour
 {
@@ -15,13 +18,14 @@ public class MainManager : MonoBehaviour
     
     private bool m_Started = false;
     private int m_Points;
+    private static int pointsMax;
     
     private bool m_GameOver = false;
-
     
     // Start is called before the first frame update
     void Start()
     {
+        pointsMax = 0;
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
         
@@ -37,6 +41,8 @@ public class MainManager : MonoBehaviour
             }
         }
     }
+
+    
 
     private void Update()
     {
@@ -70,7 +76,27 @@ public class MainManager : MonoBehaviour
 
     public void GameOver()
     {
+        if (m_Points > pointsMax)
+        {
+            pointsMax = m_Points;
+            NameScore.SaveNameScore();
+        }
         m_GameOver = true;
         GameOverText.SetActive(true);
+    }
+
+    [Serializable]
+    public class NameScore
+    {
+        public int score;
+        public string playerName;
+        public static void SaveNameScore()
+        {
+            NameScore data = new NameScore();
+            data.score = pointsMax;
+            data.playerName = NameManager.GetInstance().GetName();
+            string json = JsonUtility.ToJson(data);
+            File.WriteAllText(Application.persistentDataPath + "/record.json", json);
+        }
     }
 }
